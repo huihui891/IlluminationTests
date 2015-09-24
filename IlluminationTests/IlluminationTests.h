@@ -10,7 +10,7 @@ Mat tan_triggs_preprocessing(Mat& current_image, float alpha, float tau,
 Mat norm_0_255(const Mat&src);
 Mat tan_triggs(Mat& current_image);
 Mat DOG(Mat& I, int sigma0, int sigma1);
-Mat gamma_correction(Mat& current_image, double gamma);
+Mat gamma_decorrection(Mat& current_image, double gamma);
 Mat clahe_transformation(Mat& current_image, int clip_limit, int tile_size);
 Mat histeq_transformation(Mat& current_image);
 Mat bilateral_filtering(Mat& current_image);

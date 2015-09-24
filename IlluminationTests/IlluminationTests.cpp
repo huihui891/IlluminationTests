@@ -106,15 +106,15 @@ Mat DOG(Mat& I, int sigma0 = 1, int sigma1 = 2){
 	}
 	return current_DOG;
 }
-Mat gamma_correction(Mat& current_image, double gamma){
+Mat gamma_decorrection(Mat& current_image, double gamma){
 	/* Gamma Correction */
 	Mat current_gamma;
 	Mat lut_matrix(1, 256, CV_8UC1);
 	uchar *ptr = lut_matrix.ptr();
-	double inverse_gamma = 1.0 / gamma;
+	//double inverse_gamma = 1.0 / gamma;
 
 	for (int i = 0; i < 256; i++)
-		ptr[i] = (int)(pow((double)i / 255.0, inverse_gamma) * 255.0);
+		ptr[i] = (int)(pow((double)i / 255.0, gamma) * 255.0);
 	LUT(current_image, lut_matrix, current_gamma);
 	return current_gamma;
 }
@@ -123,7 +123,7 @@ Mat clahe_transformation(Mat& current_image, int clip_limit = 1, int tile_size =
 	/* CLAHE */
 	Mat current_clahe;
 	vector<Mat> channels_clahe;
-
+	
 	cvtColor(current_image, current_image, CV_BGR2Lab);
 	split(current_image, channels_clahe);
 
@@ -182,8 +182,10 @@ Mat bilateral_filtering(Mat& current_image){
 
 int main(){
 
-	String fileName = "presenter_video1", ext = "wmv";
-	String videoFile = "C:/Users/virprabh/Documents/Visual Studio 2013/Projects/IlluminationTests/" + fileName + "." + ext;
+	cout << "Enter filename (relative to data/):" << endl;
+	string fileName;
+	cin >> fileName;
+	string videoFile = "C:/Users/virprabh/Documents/Visual Studio 2013/Projects/IlluminationTests/data/" + fileName;
 	VideoCapture capture = videoFile.empty() ? VideoCapture(0) : VideoCapture(videoFile);
 	if (!capture.isOpened())
 	{
@@ -196,7 +198,7 @@ int main(){
 	int fwidth = (int)capture.get(CV_CAP_PROP_FRAME_WIDTH);
 	int fheight = (int)capture.get(CV_CAP_PROP_FRAME_HEIGHT);
 	cv::Size frameSize(fwidth, fheight);
-	String outputFilePath = "C:/Users/virprabh/Documents/Visual Studio 2013/Projects/IlluminationTests/Results/" + fileName + "." + ext;
+	string outputFilePath = "C:/Users/virprabh/Documents/Visual Studio 2013/Projects/IlluminationTests/Results/" + fileName;
 	int fps = 10;
 	int fourCCforFile = 844516695;
 	int ex = static_cast<int>(capture.get(CV_CAP_PROP_FOURCC));
@@ -221,7 +223,7 @@ int main(){
 		//LoggingUtils::AddToImageGrid(current_tan_final, "Tan Final");
 		
 		double gamma = 2.2;
-		Mat current_gamma = gamma_correction(current_image.clone(), gamma);
+		Mat current_gamma = gamma_decorrection(current_image.clone(), gamma);
 		LoggingUtils::AddToImageGrid(current_gamma, "Current Gamma");
 
 		cvtColor(current_gamma, current_gamma, CV_BGR2Lab);
